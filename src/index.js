@@ -1,19 +1,18 @@
 import * as THREE from 'three'
-import * as CANNON from 'cannon'
+import { Vec3, World, NaiveBroadphase, Body, Sphere } from 'cannon'
+import { GyroNorm } from '../vendor/gyronorm.complete.min'
 
 const timestep = 1/60
-const world = new CANNON.World()
+const world = new World()
 world.gravity.set(0,0,0)
-world.broadphase = new CANNON.NaiveBroadphase()
+world.broadphase = new NaiveBroadphase()
 world.solver.iterations = 10
 
-const shape = new CANNON.Sphere(2)
-const body = new CANNON.Body({
+const shape = new Sphere(2)
+const body = new Body({
   mass: 1
 })
 body.addShape(shape)
-body.angularVelocity.set(1,5,2)
-body.angularDamping = 0.2
 
 world.addBody(body)
 
@@ -34,7 +33,7 @@ const material = new THREE.MeshBasicMaterial({
 const sphere = new THREE.Mesh(geometry, material)
 
 scene.add(sphere)
-camera.position.z = 5
+camera.position.z = 15
 
 function render () {
   requestAnimationFrame(render)
@@ -49,3 +48,19 @@ function updatePhysics () {
   sphere.position.copy(body.position)
   sphere.quaternion.copy(body.quaternion)
 }
+
+function Interval (min, max) {
+  return num => Math.min(max, Math.max(num, min))
+}
+
+const gn = new GyroNorm()
+
+gn.init().then(function () {
+  gn.start(function (data) {
+    const clamp = Interval(-1, 1)
+    const beta = clamp(data.do.beta / 90)
+    const gamma = clamp(data.do.gamma / 90)
+
+    body.applyLocalForce(new Vec3(gamma,beta,0), new Vec3(0,0,1)) 
+  })
+})
