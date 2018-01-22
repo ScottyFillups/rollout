@@ -80,14 +80,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var timestep = 1/60
 var world = new __WEBPACK_IMPORTED_MODULE_1_cannon__["World"]()
-world.gravity.set(0,0,0)
+world.gravity.set(0,0,-9.82)
 world.broadphase = new __WEBPACK_IMPORTED_MODULE_1_cannon__["NaiveBroadphase"]()
 world.solver.iterations = 10
 
+var groundMaterial = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Material"]('groundMaterial')
+var ground_ground_cm = new __WEBPACK_IMPORTED_MODULE_1_cannon__["ContactMaterial"](groundMaterial, groundMaterial, {
+  friction: 0.8,
+  restitution: 0.3,
+  contactEquationStiffness: 1e8,
+  contactEquationRelaxation: 3,
+  frictionEquationStiffness: 1e8,
+  frictionEquationRegularizationTime: 3,
+});
+
+var groundShape = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Plane"]()
+var groundBody = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Body"]({ mass: 0, material: groundMaterial })
+groundBody.addShape(groundShape)
+world.add(groundBody)
+
+
 var shape = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Sphere"](2)
 var body = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Body"]({
-  mass: 1
+  mass: 1,
+  material: groundMaterial
 })
+body.position.set(0,0,100)
 body.addShape(shape)
 
 world.addBody(body)
@@ -109,7 +127,7 @@ var material = new __WEBPACK_IMPORTED_MODULE_0_three__["c" /* MeshBasicMaterial 
 var sphere = new __WEBPACK_IMPORTED_MODULE_0_three__["b" /* Mesh */](geometry, material)
 
 scene.add(sphere)
-camera.position.z = 15
+camera.position.z = 100
 
 function render () {
   requestAnimationFrame(render)
@@ -134,8 +152,8 @@ var gn = new __WEBPACK_IMPORTED_MODULE_2__vendor_gyronorm_complete_min__["GyroNo
 gn.init().then(function () {
   gn.start(function (data) {
     var clamp = Interval(-1, 1)
-    var beta = clamp(data.do.beta / 90)
-    var gamma = clamp(data.do.gamma / 90)
+    var beta = 100 * -clamp(data.do.beta / 90)
+    var gamma = 100 * clamp(data.do.gamma / 90)
 
     body.applyLocalForce(new __WEBPACK_IMPORTED_MODULE_1_cannon__["Vec3"](gamma,beta,0), new __WEBPACK_IMPORTED_MODULE_1_cannon__["Vec3"](0,0,1)) 
   })
