@@ -10,7 +10,7 @@ world.solver.iterations = 10
 
 const groundMaterial = new Material('groundMaterial')
 const ground_ground_cm = new ContactMaterial(groundMaterial, groundMaterial, {
-  friction: 0.8,
+  friction: 0.3,
   restitution: 0.3,
   contactEquationStiffness: 1e8,
   contactEquationRelaxation: 3,
@@ -18,18 +18,19 @@ const ground_ground_cm = new ContactMaterial(groundMaterial, groundMaterial, {
   frictionEquationRegularizationTime: 3,
 });
 
+world.addContactMaterial(ground_ground_cm)
+
 const groundShape = new Plane()
 const groundBody = new Body({ mass: 0, material: groundMaterial })
 groundBody.addShape(groundShape)
 world.add(groundBody)
-
 
 const shape = new Sphere(2)
 const body = new Body({
   mass: 1,
   material: groundMaterial
 })
-body.position.set(0,0,100)
+body.position.set(0,0,2)
 body.addShape(shape)
 
 world.addBody(body)
@@ -75,10 +76,12 @@ const gn = new GyroNorm()
 
 gn.init().then(function () {
   gn.start(function (data) {
-    const clamp = Interval(-1, 1)
-    const beta = 100 * -clamp(data.do.beta / 90)
-    const gamma = 100 * clamp(data.do.gamma / 90)
+    //const clamp = Interval(-1, 1)
+    //const beta = 100 * -clamp(data.do.beta / 90)
+    //const gamma = 100 * clamp(data.do.gamma / 90)
 
-    body.applyLocalForce(new Vec3(gamma,beta,0), new Vec3(0,0,1)) 
+    //body.applyLocalForce(new Vec3(gamma,beta,0), new Vec3(0,0,1))
+	console.log ("update the forces");
+	body.applyForce(new Vec3(20, 0, 0), body.position)
   })
 })
