@@ -86,7 +86,7 @@ world.solver.iterations = 10
 
 var groundMaterial = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Material"]('groundMaterial')
 var ground_ground_cm = new __WEBPACK_IMPORTED_MODULE_1_cannon__["ContactMaterial"](groundMaterial, groundMaterial, {
-  friction: 0.8,
+  friction: 0.3,
   restitution: 0.3,
   contactEquationStiffness: 1e8,
   contactEquationRelaxation: 3,
@@ -94,18 +94,19 @@ var ground_ground_cm = new __WEBPACK_IMPORTED_MODULE_1_cannon__["ContactMaterial
   frictionEquationRegularizationTime: 3,
 });
 
+world.addContactMaterial(ground_ground_cm)
+
 var groundShape = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Plane"]()
 var groundBody = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Body"]({ mass: 0, material: groundMaterial })
 groundBody.addShape(groundShape)
 world.add(groundBody)
-
 
 var shape = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Sphere"](2)
 var body = new __WEBPACK_IMPORTED_MODULE_1_cannon__["Body"]({
   mass: 1,
   material: groundMaterial
 })
-body.position.set(0,0,100)
+body.position.set(0,0,2)
 body.addShape(shape)
 
 world.addBody(body)
@@ -151,11 +152,13 @@ var gn = new __WEBPACK_IMPORTED_MODULE_2__vendor_gyronorm_complete_min__["GyroNo
 
 gn.init().then(function () {
   gn.start(function (data) {
-    var clamp = Interval(-1, 1)
-    var beta = 100 * -clamp(data.do.beta / 90)
-    var gamma = 100 * clamp(data.do.gamma / 90)
+    //const clamp = Interval(-1, 1)
+    //const beta = 100 * -clamp(data.do.beta / 90)
+    //const gamma = 100 * clamp(data.do.gamma / 90)
 
-    body.applyLocalForce(new __WEBPACK_IMPORTED_MODULE_1_cannon__["Vec3"](gamma,beta,0), new __WEBPACK_IMPORTED_MODULE_1_cannon__["Vec3"](0,0,1)) 
+    //body.applyLocalForce(new Vec3(gamma,beta,0), new Vec3(0,0,1))
+	console.log ("update the forces");
+	body.applyForce(new __WEBPACK_IMPORTED_MODULE_1_cannon__["Vec3"](20, 0, 0), body.position)
   })
 })
 
