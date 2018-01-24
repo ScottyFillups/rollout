@@ -82,38 +82,6 @@ function radiansToDegrees(angle){
 	return angle * (180 / Math.PI)
 }
 
-var testVals = [[45, 45, 0], [-45, 45, 0], [45, -45, 0], [90, 1, 0]]
-//Test some values to check
-for (var i = 0; i < testVals.length; i++){
-	var bet = Math.abs(degreesToRadians(testVals[i][0]))
-	var gam = Math.abs(degreesToRadians(testVals[i][1]))
-	var alpha = testVals[i][2]
-	const a = 1/Math.tan(gam)
-	const b = 1/Math.tan(bet)
-	const c = Math.sqrt(a*a + b*b)
-	const d = (a * b) / c
-
-	const phi = Math.acos(d/a)
-	
-	var offset = 0;
-	var direction = 0;
-	if (testVals[i][1] > 0){
-		offset = Math.PI/2
-	} else {
-		offset = -Math.PI/2
-	}
-	if (testVals[i][0] > 0){
-		direction = 1
-	} else {
-		direction = -1
-	}
-	const rotation = alpha + offset + (direction * phi)
-	console.log (a + " " + b + " " + c + " " + d + " " + radiansToDegrees(phi))
-	console.log (radiansToDegrees(rotation))
-	const theta = radiansToDegrees(Math.atan(1/d))
-	console.log ("beta: " + testVals[i][0] + ", gamma: " + testVals[i][1] + ", theta: " + theta);
-
-}
 const gn = new GyroNorm()
 
 gn.init().then(function () {
@@ -138,27 +106,27 @@ gn.init().then(function () {
 
 	const a = 1/Math.tan(gammaAbs)
 	const b = 1/Math.tan(betaAbs)
+	if (a == Infinity || b == Infinity){
+		  return
+ 	}
 	const c = Math.sqrt(a*a + b*b)
 	const d = (a * b) / c
 	const theta = Math.atan(1/d)
 	const phi = Math.acos(d/a)
-
+	
 	var offset = gamma > 0 ? -Math.PI/2 : Math.PI/2;
 	var direction = (beta > 0 && gamma < 0) || (beta < 0 && gamma > 0) ? 1 : -1;
 
-	console.log (offset + " " + direction)
-
 	const rotation = offset + (direction * phi)
 	const actualAngle = rotation + Math.PI/2
-	const psuedoAlpha = alpha + Math.PI/2
 	// Limit the value of theta
 	  //
   	$('#field4').value = radiansToDegrees(phi)
   	$('#field5').value = radiansToDegrees(theta)
 	$('#field6').value = radiansToDegrees(rotation)
 	$('#field7').value = radiansToDegrees(actualAngle)
-	const magnitude = 10;
-	//body.applyImpulse(new Vec3(magnitude * Math.cos(psuedoAlpha), magnitude * Math.sin(psuedoAlpha), 0), body.position)
-  	body.velocity.set(magnitude * Math.cos(actualAngle), magnitude * Math.sin(actualAngle), 0)
+	const magnitude = 2;
+	body.applyImpulse(new Vec3(magnitude * Math.cos(actualAngle), magnitude * Math.sin(actualAngle), 0), body.position)
+  	//body.velocity.set(magnitude * Math.cos(actualAngle), magnitude * Math.sin(actualAngle), 0)
   })
 })
