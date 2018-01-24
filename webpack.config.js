@@ -4,7 +4,7 @@ const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 
 const plugins = [
   new HtmlWebpackPlugin({
-    title: 'rollout',
+    title: 'rollout'
   }),
   new AddAssetHtmlPlugin({
     filepath: path.join(__dirname, './src/style.css'),

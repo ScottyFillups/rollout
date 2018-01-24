@@ -1,4 +1,7 @@
 /node_modules
-/dist
+index.html
+style.css
 *.swo
 *.swp
+bundle.*.map
+bundle.js

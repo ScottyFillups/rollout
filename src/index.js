@@ -2,11 +2,13 @@ import * as THREE from 'three'
 import { ContactMaterial, Material, Vec3, World, NaiveBroadphase, Plane, Body, Sphere } from 'cannon'
 import { GyroNorm } from '../vendor/gyronorm.complete.min'
 
+const $ = document.querySelector.bind(document)
 const timestep = 1/60
 const world = new World()
 world.gravity.set(0,0,-9.82)
 world.broadphase = new NaiveBroadphase()
 world.solver.iterations = 10
+
 
 const groundMaterial = new Material('groundMaterial')
 const ground_ground_cm = new ContactMaterial(groundMaterial, groundMaterial, {
@@ -81,6 +83,7 @@ gn.init().then(function () {
     //const gamma = 100 * clamp(data.do.gamma / 90)
 
     //body.applyLocalForce(new Vec3(gamma,beta,0), new Vec3(0,0,1))
+  $('#field1').value = 2
 	console.log ("update the forces");
 	body.applyForce(new Vec3(20, 0, 0), body.position)
   })
